@@ -1,0 +1,2 @@
+2019-08-08 08:00:07 ERROR (MainThread) [homeassistant.components.hue] Error connecting to the Hue bridge at 192.168.0.2
+2019-08-08 08:00:07 WARNING (MainThread) [homeassistant.config_entries] Config entry for hue not ready yet. Retrying in 5 seconds.

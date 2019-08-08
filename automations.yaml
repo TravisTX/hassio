@@ -1,0 +1,33 @@
+- id: '1565232490457'
+  alias: Stair Light - On
+  trigger:
+  - entity_id: binary_sensor.stair_motion
+    platform: state
+    to: 'on'
+  condition:
+  - after: sunset
+    after_offset: '60'
+    before: sunrise
+    before_offset: '60'
+    condition: sun
+  action:
+  - alias: ''
+    data:
+      entity_id: switch.stair_switch
+    service: switch.turn_on
+- id: '1565232574447'
+  alias: Stair Light - Off
+  trigger:
+  - entity_id: binary_sensor.stair_motion
+    platform: state
+    to: 'off'
+  condition:
+  - after: sunset
+    after_offset: '60'
+    before: sunrise
+    before_offset: '60'
+    condition: sun
+  action:
+  - data:
+      entity_id: switch.stair_switch
+    service: switch.turn_off
