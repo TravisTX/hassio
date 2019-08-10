@@ -1,33 +1,79 @@
-- id: '1565232490457'
+- id: '1'
   alias: Stair Light - On
   trigger:
   - entity_id: binary_sensor.stair_motion
     platform: state
     to: 'on'
   condition:
-  - after: sunset
-    after_offset: '60'
-    before: sunrise
-    before_offset: '60'
-    condition: sun
+  - condition: state
+    entity_id: input_boolean.night_time
+    state: 'on'
   action:
   - alias: ''
     data:
       entity_id: switch.stair_switch
     service: switch.turn_on
-- id: '1565232574447'
+- id: '2'
   alias: Stair Light - Off
   trigger:
   - entity_id: binary_sensor.stair_motion
     platform: state
     to: 'off'
   condition:
-  - after: sunset
-    after_offset: '60'
-    before: sunrise
-    before_offset: '60'
-    condition: sun
+  - condition: state
+    entity_id: input_boolean.night_time
+    state: 'on'
   action:
   - data:
       entity_id: switch.stair_switch
     service: switch.turn_off
+- id: '3'
+  alias: Hall Light - On
+  trigger:
+  - entity_id: binary_sensor.hall_motion
+    platform: state
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.night_time
+    state: 'on'
+  action:
+  - alias: ''
+    data:
+      entity_id: light.hall2
+    service: light.turn_on
+- id: '4'
+  alias: Hall Light - Off
+  trigger:
+  - entity_id: binary_sensor.hall_motion
+    platform: state
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: input_boolean.night_time
+    state: 'on'
+  action:
+  - data:
+      entity_id: light.hall2
+    service: light.turn_off
+- id: '1565407855496'
+  alias: Night Time - On
+  trigger:
+  - event: sunset
+    offset: -01:00:00
+    platform: sun
+  condition: []
+  action:
+  - data:
+      entity_id: input_boolean.night_time
+    service: input_boolean.turn_on
+- id: '1565407920543'
+  alias: Night Time - Off
+  trigger:
+  - event: sunrise
+    platform: sun
+  condition: []
+  action:
+  - data:
+      entity_id: input_boolean.night_time
+    service: input_boolean.turn_off

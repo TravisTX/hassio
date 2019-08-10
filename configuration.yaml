@@ -17,6 +17,12 @@ zha:
 zwave:
   usb_path: /dev/ttyUSB0
 
+input_boolean:
+  night_time:
+    name: Night Time
+    icon: mdi:weather-night
+
+
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
