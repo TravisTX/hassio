@@ -56,7 +56,7 @@
   - data:
       entity_id: light.hall2
     service: light.turn_off
-- id: '1565407855496'
+- id: '5'
   alias: Night Time - On
   trigger:
   - event: sunset
@@ -67,7 +67,7 @@
   - data:
       entity_id: input_boolean.night_time
     service: input_boolean.turn_on
-- id: '1565407920543'
+- id: '6'
   alias: Night Time - Off
   trigger:
   - event: sunrise
@@ -77,3 +77,151 @@
   - data:
       entity_id: input_boolean.night_time
     service: input_boolean.turn_off
+- id: '7'
+  alias: Corbin Light - On
+  trigger:
+  - event_data:
+      device_ieee: 00:17:88:01:04:af:ff:82
+      command: 'on'
+    event_type: zha_event
+    platform: event
+  condition: []
+  action:
+    service: light.turn_on
+    entity_id: light.corbin_lamp
+    data_template:
+      transition: 0.1
+      hs_color:
+      - '{% if state_attr(''light.corbin_lamp'', ''hs_color'') == None %} 0 {% else
+        %} {{state_attr(''light.corbin_lamp'', ''hs_color'')[0]|float}} {% endif %} '
+      - '{% if state_attr(''light.corbin_lamp'', ''hs_color'') == None %} 0.392 {%
+        else %} {{state_attr(''light.corbin_lamp'', ''hs_color'')[1]|float}} {% endif
+        %} '
+      brightness: '{% if state_attr(''light.corbin_lamp'', ''brightness'')|int <=
+        83 %} 85 {% elif state_attr(''light.corbin_lamp'', ''brightness'')|int <=
+        168 %} 170 {% elif state_attr(''light.corbin_lamp'', ''brightness'')|int <=
+        250 %} 255 {% else %} 85 {% endif %}
+
+        '
+- id: '8'
+  alias: Corbin Light - Off
+  trigger:
+  - event_data:
+      device_ieee: 00:17:88:01:04:af:ff:82
+      command: off_with_effect
+    event_type: zha_event
+    platform: event
+  condition: []
+  action:
+  - service: light.turn_on
+    entity_id: light.corbin_lamp
+    data:
+      brightness: 0
+      transition: 0.1
+- id: '9'
+  alias: Corbin Light - Hue Up
+  trigger:
+  - event_data:
+      device_ieee: 00:17:88:01:04:af:ff:82
+      command: step
+      args:
+      - 0
+      - 30
+      - 9
+    event_type: zha_event
+    platform: event
+  condition: []
+  action:
+    service: light.turn_on
+    entity_id: light.corbin_lamp
+    data_template:
+      transition: 0.1
+      hs_color:
+      - "{% set suggested = states.light.corbin_lamp.attributes.hs_color[0]|int +\
+        \ 30 %} {% if suggested < 360 %}\n  {{ suggested }}\n{% else %}\n  0\n{% endif\
+        \ %}\n"
+      - 100
+- id: '10'
+  alias: Corbin Light - Saturation Up
+  trigger:
+  - event_data:
+      device_ieee: 00:17:88:01:04:af:ff:82
+      command: step
+      args:
+      - 1
+      - 30
+      - 9
+    event_type: zha_event
+    platform: event
+  condition: []
+  action:
+    service: light.turn_on
+    entity_id: light.corbin_lamp
+    data_template:
+      transition: 0.1
+      hs_color:
+      - '{% if state_attr("light.corbin_lamp", "hs_color") == None %} 0 {% else %}
+        {{state_attr("light.corbin_lamp", "hs_color")[0]|float}} {% endif %} '
+      - '{% set suggested = state_attr("light.corbin_lamp", "hs_color")[1] + 33 %}
+        {% if suggested < 100 %} {{ suggested }} {% else %} 33 {% endif%} '
+- id: '11'
+  alias: Lava Lamp - On
+  trigger:
+  - at: '18:00:00'
+    platform: time
+  condition: []
+  action:
+  - data:
+      entity_id: switch.lava_lamp_plug
+    service: switch.turn_on
+- id: '12'
+  alias: Lava Lamp - Off
+  trigger:
+  - at: '22:30:00'
+    platform: time
+  condition: []
+  action:
+  - data:
+      entity_id: switch.lava_lamp_plug
+    service: switch.turn_off
+- id: '13'
+  alias: Garage Door Reminder
+  trigger:
+  - platform: state
+    entity_id: cover.garage_door
+    to: open
+    for:
+      minutes: 5
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.garage_door
+  condition:
+    condition: state
+    entity_id: cover.garage_door
+    state: open
+  action:
+  - service: notify.pushbullet_travis
+    data:
+      message: The Garage Door Is Still Open
+  - service: notify.pushbullet_rebecca
+    data:
+      message: The Garage Door Is Still Open
+  - service: timer.start
+    entity_id: timer.garage_door
+- id: '14'
+  alias: Tesla Charge Reminder
+  trigger:
+  - at: '19:00:00'
+    platform: time
+  condition:
+  - below: '100'
+    condition: numeric_state
+    entity_id: sensor.tesla_model_3_range_sensor
+  action:
+  - data:
+      message: Plug in the Tesla
+    service: notify.pushbullet_travis
+  - data:
+      message: Plug in the Tesla
+    service: notify.pushbullet_rebecca

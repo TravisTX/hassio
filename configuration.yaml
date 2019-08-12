@@ -17,11 +17,41 @@ zha:
 zwave:
   usb_path: /dev/ttyUSB0
 
+binary_sensor:
+  - platform: huesensor
+device_tracker:
+  - platform: huesensor
+sensor:
+  - platform: huesensor
+
 input_boolean:
   night_time:
     name: Night Time
     icon: mdi:weather-night
 
+discovery:
+
+cover:
+  - platform: myq
+    username: !secret myq_username
+    password: !secret myq_password
+    type: chamberlain
+
+notify:
+  - name: pushbullet_travis
+    platform: pushbullet
+    api_key: !secret pushbullet_travis_api_key
+  - name: pushbullet_rebecca
+    platform: pushbullet
+    api_key: !secret pushbullet_rebecca_api_key
+
+tesla:
+  username: !secret tesla_username
+  password: !secret tesla_password
+
+timer:
+  garage_door:
+    duration: '00:05:00'
 
 group: !include groups.yaml
 automation: !include automations.yaml
