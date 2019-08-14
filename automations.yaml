@@ -87,22 +87,10 @@
     platform: event
   condition: []
   action:
-    service: light.turn_on
-    entity_id: light.corbin_lamp
-    data_template:
-      transition: 0.1
-      hs_color:
-      - '{% if state_attr(''light.corbin_lamp'', ''hs_color'') == None %} 0 {% else
-        %} {{state_attr(''light.corbin_lamp'', ''hs_color'')[0]|float}} {% endif %} '
-      - '{% if state_attr(''light.corbin_lamp'', ''hs_color'') == None %} 0.392 {%
-        else %} {{state_attr(''light.corbin_lamp'', ''hs_color'')[1]|float}} {% endif
-        %} '
-      brightness: '{% if state_attr(''light.corbin_lamp'', ''brightness'')|int <=
-        83 %} 85 {% elif state_attr(''light.corbin_lamp'', ''brightness'')|int <=
-        168 %} 170 {% elif state_attr(''light.corbin_lamp'', ''brightness'')|int <=
-        250 %} 255 {% else %} 85 {% endif %}
-
-        '
+    service: python_script.color_remote
+    data:
+      entity_id: light.corbin_lamp
+      command: 'brightness'
 - id: '8'
   alias: Corbin Light - Off
   trigger:
@@ -113,11 +101,10 @@
     platform: event
   condition: []
   action:
-  - service: light.turn_on
-    entity_id: light.corbin_lamp
+    service: python_script.color_remote
     data:
-      brightness: 0
-      transition: 0.1
+      entity_id: light.corbin_lamp
+      command: 'off'
 - id: '9'
   alias: Corbin Light - Hue Up
   trigger:
@@ -132,15 +119,10 @@
     platform: event
   condition: []
   action:
-    service: light.turn_on
-    entity_id: light.corbin_lamp
-    data_template:
-      transition: 0.1
-      hs_color:
-      - "{% set suggested = states.light.corbin_lamp.attributes.hs_color[0]|int +\
-        \ 30 %} {% if suggested < 360 %}\n  {{ suggested }}\n{% else %}\n  0\n{% endif\
-        \ %}\n"
-      - 100
+    service: python_script.color_remote
+    data:
+      entity_id: light.corbin_lamp
+      command: 'hue'
 - id: '10'
   alias: Corbin Light - Saturation Up
   trigger:
@@ -155,15 +137,10 @@
     platform: event
   condition: []
   action:
-    service: light.turn_on
-    entity_id: light.corbin_lamp
-    data_template:
-      transition: 0.1
-      hs_color:
-      - '{% if state_attr("light.corbin_lamp", "hs_color") == None %} 0 {% else %}
-        {{state_attr("light.corbin_lamp", "hs_color")[0]|float}} {% endif %} '
-      - '{% set suggested = state_attr("light.corbin_lamp", "hs_color")[1] + 33 %}
-        {% if suggested < 100 %} {{ suggested }} {% else %} 33 {% endif%} '
+    service: python_script.color_remote
+    data:
+      entity_id: light.corbin_lamp
+      command: 'sat'
 - id: '11'
   alias: Lava Lamp - On
   trigger:
