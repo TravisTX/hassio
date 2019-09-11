@@ -56,7 +56,15 @@ timer:
 python_script:
 
 logger:
-  default: info
+  default: debug
+
+light:
+  - platform: group
+    name: Master Lights
+    entities:
+      - light.master_r
+      - light.master_t
+
 
 group: !include groups.yaml
 automation: !include automations.yaml

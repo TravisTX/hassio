@@ -40,8 +40,8 @@
   action:
   - alias: ''
     data:
-      entity_id: light.hall2
-    service: light.turn_on
+      entity_id: switch.hall_switch
+    service: switch.turn_on
 - id: '4'
   alias: Hall Light - Off
   trigger:
@@ -54,8 +54,8 @@
     state: 'on'
   action:
   - data:
-      entity_id: light.hall2
-    service: light.turn_off
+      entity_id: switch.hall_switch
+    service: switch.turn_off
 - id: '5'
   alias: Night Time - On
   trigger:
@@ -90,7 +90,7 @@
     service: python_script.color_remote
     data:
       entity_id: light.corbin_lamp
-      command: 'brightness'
+      command: brightness
 - id: '8'
   alias: Corbin Light - Off
   trigger:
@@ -122,7 +122,7 @@
     service: python_script.color_remote
     data:
       entity_id: light.corbin_lamp
-      command: 'hue'
+      command: hue
 - id: '10'
   alias: Corbin Light - Saturation Up
   trigger:
@@ -140,7 +140,7 @@
     service: python_script.color_remote
     data:
       entity_id: light.corbin_lamp
-      command: 'sat'
+      command: sat
 - id: '11'
   alias: Lava Lamp - On
   trigger:
@@ -202,3 +202,35 @@
   - data:
       message: Plug in the Tesla
     service: notify.pushbullet_rebecca
+    
+- id: '15'
+  alias: Back Porch - On
+  trigger:
+  - entity_id: binary_sensor.back_door
+    platform: state
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.night_time
+    state: 'on'
+  action:
+  - alias: ''
+    data:
+      entity_id: light.back_porch
+    service: light.turn_on
+- id: '16'
+  alias: Back Porch  - Off
+  trigger:
+  - entity_id:  binary_sensor.back_door
+    platform: state
+    to: 'off'
+    for:
+      minutes: 1
+  condition:
+  - condition: state
+    entity_id: input_boolean.night_time
+    state: 'on'
+  action:
+  - data:
+      entity_id: light.back_porch
+    service: light.turn_off
